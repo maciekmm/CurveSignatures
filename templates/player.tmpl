@@ -1,0 +1,49 @@
+{{define "player"}}
+{{template "header"}}
+
+<main class="profile">
+	<h1>{{ .Name }}'s profile</h1>
+	<div class="colls">
+		<figure class="avatar">
+			<img src="/avatar/{{ .UID }}">
+			<figcaption>{{ .Name }}'s avatar</figcaption>
+		</figure>
+	</div>
+	<div class="colls">
+		<h2>Information:</h2>
+		<dl>
+			<dt>ID</dt>
+			<dd>{{.UID}}</dd>
+			
+			<dt>Premium</dt>
+			<dd>{{if .Premium}}
+				<img src="/assets/premium.png"> <span class="highlight">Yes</span>
+			{{else}}
+				No <a class="highlight" href="http://curvefever.com/achtung/premium">(buy)</a>
+			{{end}}</dd>
+			
+			<dt>Champion</dt>
+			<dd>{{if .Champion}}
+				<img src="/assets/crown.png"> <span class="highlight">Yes</span>
+			{{else}}
+				No
+			{{end}}</dd>
+		</dl>
+	</div>
+	<div class="colls">
+		<h2>Ranks:</h2>
+		<dl class="ranks" style="-webkit-columns: {{divAndCeil (.Ranks | len) 3}}; -moz-columns: {{divAndCeil (.Ranks | len) 3}}; columns: {{divAndCeil (.Ranks | len) 3}}">
+			{{range $k, $v := .Ranks}}
+				<dt><img title="{{$k | getRegionName}}" src="{{$k | getRegionIcon}}"> {{ $k | rankBeautify }}</dt>
+				<dd>{{ $v.Rank }}</dd>
+			{{end}}
+		</dl>
+	</div>
+	<div class="colls">
+		<h2>Links:</h2>
+		<a href="http://curvefever.com/user/{{.UID}}" class="button">CurveFever profile -></a>
+	</div>
+</main>
+{{template "route-chooser"}}
+{{template "footer"}}
+{{end}}

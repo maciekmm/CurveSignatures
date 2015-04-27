@@ -1,0 +1,35 @@
+{{define "created"}}
+{{template "header"}}
+<main class="creation-results">
+	<h1>Creation result</h1>
+	<div class="colls">
+		<figure>
+			<figcaption>Generated signature</figcaption>
+			<a href="{{.profileLink}}"><img src="{{.link}}" alt="{{.player.Name}}'s signature"></a>
+		</figure>
+	
+		<fieldset >
+			<dl>
+				<dt><label for="direct-link">Direct link</label></dt>
+				<dd><input type="text" id="direct-link" class="js-select" readonly size="37" value="{{.link}}"></dd>
+				<dt><label for="bbcode">Forums BBCode</label></dt>
+				<dd><textarea cols="37" rows="7" type="text" class="js-select" id="bbcode" readonly value="BB Code">[url={{.profileLink}}][img]{{.link}}[/img][/url]</textarea></dd>
+				<dt><label for="html">HTML (<a href="http://curvefever.com">Curvefever forums</a>)</label></dt>
+				<dd><textarea cols="37" rows="7" id="html" class="js-select" readonly value="HTML"><a href="{{.profileLink}}"><img src="{{.link}}" alt="{{.player.Name}}'s profile on curvefever" style="height: {{.layout.Height}}px; width: {{.layout.Width}}px;" /></a></textarea></dd>
+			</dl>
+		</fieldset>
+	</div><div class="colls">
+		<img src="/assets/curvefever-logo.png" style="width: 50%;"><h2>1. CurveFever forums</h2>
+
+		<p>As the process of putting signature on curvefever is fairly complicated, follow steps located below to have it done right.</p>
+		<ol>
+			<li>Go to <a href="http://curvefever.com">curvefever.com</a> and log in.</li>
+			<li>Click this link: <a href="http://curvefever.com/user/{{.player.UID}}/edit#edit-signature-settings">http://curvefever.com/user/{{.player.UID}}/edit#edit-signature-settings</a></li>
+			<li>Click on <i>User HTML</i> and change it to <i>Plain text</i></li>
+			<li>Change it back to <i>User HTML</i></li>
+			<li>Scroll down and click Save</li>
+			</ol>
+	</div>
+</main>
+{{template "footer"}}
+{{end}}

@@ -1,0 +1,37 @@
+{{define "create-search"}}
+{{template "header"}}
+<main class="creation-results">
+	<h1>Get Signature</h1>
+		{{if eq .ShowMessage true}}
+			<div id="alert">
+				{{.Message}}
+			</div>
+		{{end}}
+	<div class="colls">
+		<p>The only thing you need to do is to fill your in-game nickname in the marked field. The whole process takes only 5 seconds!</p>
+		<p>Your profile will be downloaded from curvefever servers and optimal configuration will be chosen. On the right side you can see example signatures.</p>
+		<form action="/create" method="POST">
+			<fieldset>
+				<label for="user-id">Username or id:</label>
+				<input id="user-id" type="text" placeholder="maciekmm_tk" name="name" required><input value="Get one!" type="submit">
+			</fieldset>		
+		</form>
+		<p>Signatures are automatically updated on 6am UTC</p>
+	</div><div class="colls">
+		<figure class="example" >
+			<img src="/img/169538/default/+team_eu+ffa_eu+1v1_eu.png">
+			<figcaption>Example default signature:</figcaption>
+		</figure>
+		<figure class="example" >
+			<img src="/img/169538/userbar/+team_eu+ffa_eu+1v1_eu.png">
+			<figcaption>Example userbar signature:</figcaption>
+		</figure>
+		<figure class="example" >
+			<img src="/img/793301/default/+team_eu+ffa_eu+1v1_eu.png">
+			<figcaption>Example default signature:</figcaption>
+		</figure>
+	</div>
+
+</main>
+{{template "footer"}}
+{{end}}

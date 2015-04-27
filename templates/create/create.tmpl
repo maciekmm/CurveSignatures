@@ -1,0 +1,36 @@
+{{define "create"}}
+{{template "header"}}
+<main>
+	<h1>Creating signature for {{.profile.Name}}</h1>
+	<p>Process of creating signatures is really simple. Select preferred layout, adjust ranks and click Generate, system will take care of the rest.</p>
+	<form method="POST" action="/create">
+	<input type="hidden" name="player-id" value="{{$.profile.UID}}">
+    <fieldset>
+		<h2>Choose layout</h2>
+		<ul class="layout-select select">
+			{{range $k,$v := .layouts }}
+				<li>
+					<input class="js-layout-selector" id="layout-{{$k}}" type="radio" name="layout" value="{{$k}}" data-maxranks="{{$v.MaxRanks}}">
+					<label for="layout-{{$k}}">
+						<img src="/img/169538/{{ $k }}/+team_eu+ffa_eu+1v1_eu+ffa_usa+ffa_asia.png" alt="Example signature">
+						<p>{{ $v.Name }} ({{ $v.Width }}x{{ $v.Height }}) ({{$v.MaxRanks}} max ranks)</p>
+					</label>
+				</li>
+			{{end}}
+		</ul>
+	</fieldset>
+	<fieldset class="rank-select profile select">
+		<h3>Ranks to display</h3>
+		<ul>
+			{{range $k, $v := .profile.Ranks}}
+				<li><input class="js-rank-selector" type="checkbox" name="rank" data-rank="{{$v.Rank}}" value="{{$k}}" id="rank-{{$k}}"><label for="rank-{{$k}}"><img title="{{$k | getRegionName}}" src="{{$k | getRegionIcon}}"> {{$k | getRegionName}} {{ $k | rankBeautify }} {{ $v.Rank }}</label></li>
+			{{end}}
+		</ul>
+	</fieldset>
+        <fieldset class="right">
+        <input type="submit" value="Generate!" class="button">
+</fieldset>
+</form>
+</main>
+{{template "footer"}}
+{{end}}

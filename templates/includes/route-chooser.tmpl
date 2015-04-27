@@ -1,0 +1,26 @@
+{{define "route-chooser"}}
+<!--<div class="ad">
+		<img src="https://storage.googleapis.com/support-kms-prod/SNP_501E7C3D5CA3CA07C641E6BAFB8A53C794CF_2922339_en_v2">
+	</div>-->
+<section class="route-chooser">
+	<article class="play-curvefever">
+		<h1>Play CurveFever</h1>
+		<p><a href="http://curvefever.com">CurveFever</a> also known as Achtung, die Kurve! is a <strong>multiplayer</strong> round based game. Your goal is to survive as long as possible on a field with other players, controlling snake that draws line. To help you outplay others powerups were introduced, now you can slow down, speed up or even frustrate opponents by reversing their keys. Click an image below to have fun!</p>
+		<a href="http://curvefever.com/"><img class="fade" src="/assets/curvefever-logo.png" alt="Play CurveFever"></a>
+	</article>
+	<article>
+		<h1>Get Signature</h1>
+		<p>If you want to show your skills or promote CurveFever, type your in-game nickname to get fancy <strong>signature</strong> for forums and other sites. You can customize it to meet your needs by controlling what ranks will be displayed and by choosing layout to fit into certain forums.</p>
+		<form action="/create" method="POST">
+			<fieldset>
+				<label for="username">Username:</label>
+				<input id="username" type="text" placeholder="maciekmm_tk" name="name" required><input value="Get one!" type="submit">
+			</fieldset>		
+		</form>
+		<figure class="example" >
+			<figcaption>Example signature:</figcaption>
+			<img src="/img/169538/default/+team_eu+ffa_eu+1v1_eu.png">
+		</figure>
+	</article>
+</section>
+{{end}}

@@ -1,0 +1,50 @@
+{{define "api"}}{{template "header"}}
+<main>
+<h1>CurveApi</h1>
+<p><a href="/">CurveSignatures</a> is utilizing <a href="https://github.com/maciekmm/curveapi">CurveAPI for it's backend</a> to not put a stress on curvefever servers. The API is available under <a href="http://curveapi.cf">curveapi.cf</a>, but yet not well documented. By using mentioned api you can convert username to id for need of CurveSignatures REST api. API is refreshed on daily basis at 6am.</p>
+
+<h2>Converting Username to UserId</h2>
+<p>To convert player username to uid make a following GET request:</p>
+<code>http://curveapi.cf/username/{username}</code>
+<p>Example query:</p>
+<code>http://curveapi.cf/username/maciekmm_tk</code>
+<p>Response:</p>
+<code><pre>{
+  "uid": "793301",
+  "name": "maciekmm_tk",
+  "premium": true,
+  "champion": false,
+  "picture": "http://curvefever.com/sites/default/files/pictures/picture-793301-1429279990.png",
+  "ranks": {
+    "1v1_asia": {
+      "rank": 700,</pre></code>
+
+<h2>Converting UserId to Username</h2>
+<p>To do it other way around make a following GET request:</p>
+<code>http://curveapi.cf/user/{userid}</code>
+<p>Example query:</p>
+<code>http://curveapi.cf/user/793301</code>
+<p>Response:</p>
+<code><pre>{
+  "uid": "793301",
+  "name": "maciekmm_tk",
+  "premium": true,
+  "champion": false,
+  "picture": "http://curvefever.com/sites/default/files/pictures/picture-793301-1429279990.png",
+  "ranks": {
+    "1v1_asia": {
+      "rank": 700,</pre></code>
+	
+	
+<h1>CurveSignatures API</h1>
+<h2>Getting user avatar</h2>
+<p>To get cached recent one's avatar make a following GET request:</p>
+<code>https://signatures.cf/avatar/{userid}</code>
+<p>Example query:</p>
+<code>https://signatures.cf/avatar/793301</code>
+<p>Response:</p>
+<img src="https://signatures.cf/avatar/793301">
+	
+</main>
+{{template "footer"}}
+{{end}}
