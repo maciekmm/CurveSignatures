@@ -369,6 +369,10 @@ hr {
     transition: opacity 1s linear;
 }
 
+.pure:hover {
+	text-decoration: none
+}
+
 .right {
     display: block;
     width: 100%;
