@@ -3,28 +3,29 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"github.com/maciekmm/curvesignatures/managers"
-	"github.com/maciekmm/curvesignatures/models"
 	"image"
 	"image/png"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/maciekmm/curvesignatures/managers"
+	"github.com/maciekmm/curvesignatures/models"
 )
 
-var ranksRegex *regexp.Regexp = regexp.MustCompile("^([\\+]{1}([A-Za-z0-9_]+))+\\.png$")
-var groupsRegex *regexp.Regexp = regexp.MustCompile("(?:\\+([a-z0-9_]+))")
+var ranksRegex = regexp.MustCompile("^([\\+]{1}([A-Za-z0-9_]+))+\\.png$")
+var groupsRegex = regexp.MustCompile("(?:\\+([a-z0-9_]+))")
 
 func requestAvatar(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId, err := strconv.Atoi(ps.ByName("user"))
+	userID, err := strconv.Atoi(ps.ByName("user"))
 	if err != nil {
 		w.WriteHeader(400)
-		serveJson(w, Message{"Invalid UserID"})
+		serveJSON(w, message{"Invalid UserID"})
 		return
 	}
-	profile, err := managers.GetPlayerData(userId)
+	profile, err := managers.GetPlayerData(userID)
 	avatarChan := managers.GetPlayerAvatar(*profile)
 	img := <-avatarChan
 	if img != nil {
@@ -44,25 +45,25 @@ func requestAvatar(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func requestSignature(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	userId, err := strconv.Atoi(ps.ByName("user"))
+	userID, err := strconv.Atoi(ps.ByName("user"))
 	if err != nil {
 		w.WriteHeader(400)
-		serveJson(w, Message{"Invalid UserID"})
+		serveJSON(w, message{"Invalid UserID"})
 		return
 	}
 
 	layout := ps.ByName("layout")
 
-	layoutFunc := managers.GetLayoutById(layout)
+	layoutFunc := managers.GetLayoutByID(layout)
 	if layoutFunc == nil {
 		w.WriteHeader(404)
-		serveJson(w, Message{"Layout not found"})
+		serveJSON(w, message{"Layout not found"})
 		return
 	}
 
 	if !ranksRegex.MatchString(ps.ByName("ranks")) {
 		w.WriteHeader(400)
-		serveJson(w, Message{"Wrong syntax"})
+		serveJSON(w, message{"Wrong syntax"})
 		return
 	}
 
@@ -73,14 +74,14 @@ func requestSignature(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		pureRanks[i] = reqRanks[i][1]
 	}
 
-	config := &models.Configuration{pureRanks}
-	reqs := models.RequestParameters{layout, userId, layoutFunc, config}
+	config := &models.Configuration{Ranks: pureRanks}
+	reqs := models.RequestParameters{LayoutName: layout, PlayerID: userID, Layout: layoutFunc, Ranks: config}
 
 	src, err := managers.GetSignature(reqs)
 
 	if err != nil {
 		w.WriteHeader(404)
-		serveJson(w, &Message{err.Error()})
+		serveJSON(w, &message{err.Error()})
 		return
 	}
 
@@ -101,11 +102,11 @@ func requestSignature(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	}
 }
 
-type Message struct {
+type message struct {
 	Message string `json:"message"`
 }
 
-func serveJson(rw http.ResponseWriter, data interface{}) {
+func serveJSON(rw http.ResponseWriter, data interface{}) {
 	rw.Header().Set("Content-Type", "text/json")
 	result, _ := json.Marshal(data)
 	rw.Write(result)

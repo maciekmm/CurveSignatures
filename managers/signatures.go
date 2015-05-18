@@ -2,27 +2,31 @@ package managers
 
 import (
 	"bytes"
-	"code.google.com/p/draw2d/draw2d"
 	"encoding/json"
 	"errors"
 	"image"
 	"net/http"
 	"strconv"
 	"time"
+
+	"code.google.com/p/draw2d/draw2d"
 	//Decided to use this
-	curveapi "github.com/maciekmm/curveapi/models"
-	"github.com/maciekmm/curvesignatures/models"
 	"log"
 	"os"
+
+	curveapi "github.com/maciekmm/curveapi/models"
+	"github.com/maciekmm/curvesignatures/models"
 )
 
 const (
+	// API_URL is a http address of curveapi
 	//API_URL = "http://localhost:2000/"
 	API_URL = "http://curveapi.cf/"
 )
 
+// ChampionCrown, Premium, GameLogo are images used frequently by submodules
 var ChampionCrown, Premium, GameLogo image.Image
-var signatureFiles *models.Guardian = models.New()
+var signatureFiles = models.New()
 
 func init() {
 	err := os.Mkdir("./players", 0750)
@@ -45,15 +49,16 @@ func init() {
 	draw2d.SetFontFolder("./public")
 }
 
-// Gets player data from api site
-func GetPlayerData(playerId int) (*curveapi.Profile, error) {
-	req, err := httpClient.Get(API_URL + "user/" + strconv.Itoa(playerId))
+// GetPlayerData gets player data from api site by its id
+func GetPlayerData(playerID int) (*curveapi.Profile, error) {
+	req, err := httpClient.Get(API_URL + "user/" + strconv.Itoa(playerID))
 	if err != nil || req.StatusCode != 200 {
 		return nil, errors.New("Could not load player's profile.")
 	}
 	return loadPlayerData(req)
 }
 
+// GetPlayerDataByName gets player data from api site by its name
 func GetPlayerDataByName(playerName string) (*curveapi.Profile, error) {
 	req, err := httpClient.Get(API_URL + "username/" + playerName)
 	if err != nil || req.StatusCode != 200 {
@@ -74,16 +79,16 @@ func loadPlayerData(req *http.Response) (*curveapi.Profile, error) {
 	return &profile, nil
 }
 
-// Gets folder player is associated with
-func GetPlayerFolder(profileId int) (dir string, avatarDir string) {
-	dir = "./players/" + strconv.Itoa(profileId) + "/"
+// GetPlayerFolder gets folder player is associated with
+func GetPlayerFolder(profileID int) (dir string, avatarDir string) {
+	dir = "./players/" + strconv.Itoa(profileID) + "/"
 	avatarDir = dir + "avatars/"
 	os.Mkdir(dir, 0750)
 	os.Mkdir(avatarDir, 0750)
 	return
 }
 
-// Gets signatures from cache of renders it
+// GetSignature gets signatures from cache of renders it
 // May be blocking for some period of time
 func GetSignature(params models.RequestParameters) (image.Image, error) {
 	dir, _ := GetPlayerFolder(params.PlayerID)
@@ -111,7 +116,7 @@ func GetSignature(params models.RequestParameters) (image.Image, error) {
 
 		go func() {
 			defer rw.Unlock()
-			SaveImage(signatureFileName, signature)
+			SaveImageByMime("image/png", signatureFileName, signature)
 		}()
 		return signature, nil
 	}
@@ -151,7 +156,7 @@ func GetSignature(params models.RequestParameters) (image.Image, error) {
 			//Save rendered file
 			rw.Lock()
 			defer rw.Unlock()
-			SaveImage(signatureFileName, signature)
+			SaveImageByMime("image/png", signatureFileName, signature)
 		}()
 	}) {
 		fil.Done()

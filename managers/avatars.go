@@ -1,8 +1,6 @@
 package managers
 
 import (
-	curveapi "github.com/maciekmm/curveapi/models"
-	"github.com/maciekmm/curvesignatures/models"
 	"image"
 	"log"
 	"net/http"
@@ -10,12 +8,15 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	curveapi "github.com/maciekmm/curveapi/models"
+	"github.com/maciekmm/curvesignatures/models"
 )
 
 var (
 	defaultAvatar image.Image
-	avatarFiles   *models.Guardian = models.New()
-	httpClient    *http.Client     = &http.Client{
+	avatarFiles   = models.New()
+	httpClient    = &http.Client{
 		Timeout: time.Duration(5 * time.Second),
 	}
 )
@@ -29,7 +30,7 @@ func init() {
 	}
 }
 
-// Gets player avatar
+// GetPlayerAvatar fetches avatar from cache or from curvefever servers if not present
 func GetPlayerAvatar(profile curveapi.Profile) <-chan image.Image {
 	img := make(chan image.Image)
 	if len(profile.Picture) == 0 {
@@ -51,7 +52,7 @@ func GetPlayerAvatar(profile curveapi.Profile) <-chan image.Image {
 		avatarFile, err := os.Open(avDir + fileName)
 
 		if err == nil {
-			output, err := GetImageDecodingFunction(fileName)(avatarFile)
+			output, err := LoadImage(avatarFile)
 			if err != nil {
 				rw.RUnlock()
 				rw.Lock()
@@ -68,13 +69,13 @@ func GetPlayerAvatar(profile curveapi.Profile) <-chan image.Image {
 
 			if err == nil {
 				defer req.Body.Close()
-				output, err := GetImageDecodingFunction(fileName)(req.Body)
+				output, err := LoadImage(req.Body)
 				if err == nil {
 					img <- output
 					rw.Lock()
 					defer rw.Unlock()
 					fle.OnceCaller.Do(func() {
-						err := SaveImage(avDir+fileName, output)
+						err := SaveImage(GetImageFunctionForExtension(filepath.Ext(fileName)), avDir+fileName, output)
 						if err != nil {
 							log.Println(err)
 						}

@@ -2,6 +2,7 @@ package managers
 
 import (
 	"errors"
+
 	"github.com/maciekmm/curvesignatures/models"
 )
 
@@ -11,6 +12,7 @@ func init() {
 	layouts = make(map[string]models.Layout)
 }
 
+// RegisterLayout registers new layout
 // Not thread safe, but it will be called only on startup
 func RegisterLayout(id string, layout models.Layout) error {
 	_, present := layouts[id]
@@ -21,8 +23,8 @@ func RegisterLayout(id string, layout models.Layout) error {
 	return nil
 }
 
-// Gets layout based on id
-func GetLayoutById(id string) models.Layout {
+// GetLayoutByID gets layout based on id
+func GetLayoutByID(id string) models.Layout {
 	layout, present := layouts[id]
 	if !present {
 		return nil
@@ -30,7 +32,7 @@ func GetLayoutById(id string) models.Layout {
 	return layout
 }
 
-// Get all registered layouts
+// GetRegisteredLayoutNames gets all registered layouts
 func GetRegisteredLayoutNames() map[string]models.Layout {
 	/*lays := make([]string, len(layouts))
 	i := 0

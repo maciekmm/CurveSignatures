@@ -1,20 +1,21 @@
 package main
 
 import (
-	"github.com/julienschmidt/httprouter"
-	curveapi "github.com/maciekmm/curveapi/models"
-	"github.com/maciekmm/curvesignatures/managers"
 	"html/template"
 	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
+	curveapi "github.com/maciekmm/curveapi/models"
+	"github.com/maciekmm/curvesignatures/managers"
 )
 
-var cachedTemplates *template.Template = template.Must(template.New("").Funcs(template.FuncMap{"rankBeautify": managers.ConvertToReadableName, "getRegionIcon": getRegionIconURL, "divAndCeil": divideAndCeil, "getRegionName": getRegionName}).ParseFiles("templates/includes/footer.tmpl", "templates/includes/header.tmpl", "templates/includes/route-chooser.tmpl", "templates/index.tmpl", "templates/player.tmpl", "templates/create/create.tmpl", "templates/create/created.tmpl", "templates/create/search.tmpl", "templates/404.tmpl", "templates/api.tmpl"))
+var cachedTemplates = template.Must(template.New("").Funcs(template.FuncMap{"rankBeautify": managers.ConvertToReadableName, "getRegionIcon": getRegionIconURL, "divAndCeil": divideAndCeil, "getRegionName": getRegionName}).ParseFiles("templates/includes/footer.tmpl", "templates/includes/header.tmpl", "templates/includes/route-chooser.tmpl", "templates/index.tmpl", "templates/player.tmpl", "templates/create/create.tmpl", "templates/create/created.tmpl", "templates/create/search.tmpl", "templates/404.tmpl", "templates/api.tmpl"))
 
-type M map[string]interface{}
+type m map[string]interface{}
 
 func divideAndCeil(a, b int) string {
 	return strconv.FormatInt(int64(math.Ceil(float64(a)/float64(b))), 10)
@@ -54,7 +55,7 @@ func notFound(rw http.ResponseWriter, r *http.Request) {
 func createView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	err := r.ParseForm()
 	if (err != nil || len(r.PostForm["name"]) == 0 && len(r.PostForm["player-id"]) == 0) || r.Method != "POST" {
-		cachedTemplates.ExecuteTemplate(w, "create-search", M{"ShowMessage": false})
+		cachedTemplates.ExecuteTemplate(w, "create-search", m{"ShowMessage": false})
 		return
 	}
 
@@ -62,22 +63,22 @@ func createView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if len(r.PostForm["name"]) != 0 {
 		player, err = managers.GetPlayerDataByName(r.PostFormValue("name"))
 	} else {
-		playerId, err := strconv.Atoi(r.PostFormValue("player-id"))
+		playerID, err := strconv.Atoi(r.PostFormValue("player-id"))
 		if err == nil {
-			player, err = managers.GetPlayerData(playerId)
+			player, err = managers.GetPlayerData(playerID)
 		}
 	}
 
 	if err != nil {
-		cachedTemplates.ExecuteTemplate(w, "create-search", M{
+		cachedTemplates.ExecuteTemplate(w, "create-search", m{
 			"ShowMessage": true,
 			"Message":     "Player not found, make sure you spelled it right.",
 		})
 		return
 	}
 	if len(r.PostForm["rank"]) != 0 && len(r.PostForm["layout"]) != 0 {
-		layout := managers.GetLayoutById(r.PostFormValue("layout"))
-		err = cachedTemplates.ExecuteTemplate(w, "created", M{
+		layout := managers.GetLayoutByID(r.PostFormValue("layout"))
+		err = cachedTemplates.ExecuteTemplate(w, "created", m{
 			"ranks":       r.PostForm["rank"],
 			"layout":      layout,
 			"player":      player,
@@ -87,7 +88,7 @@ func createView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 
-	err = cachedTemplates.ExecuteTemplate(w, "create", M{
+	err = cachedTemplates.ExecuteTemplate(w, "create", m{
 		"layouts": managers.GetRegisteredLayoutNames(),
 		"profile": player,
 	})
@@ -97,12 +98,12 @@ func createView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func playerView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	playerId, err := strconv.Atoi(ps.ByName("player"))
+	playerID, err := strconv.Atoi(ps.ByName("player"))
 	if err != nil {
 		notFound(w, r)
 		return
 	}
-	player, err := managers.GetPlayerData(playerId)
+	player, err := managers.GetPlayerData(playerID)
 	if err != nil {
 		notFound(w, r)
 		return

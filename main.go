@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"github.com/maciekmm/curvesignatures/managers"
-	"github.com/maciekmm/curvesignatures/models/layouts"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/maciekmm/curvesignatures/managers"
+	"github.com/maciekmm/curvesignatures/models/layouts"
 )
 
 const (
+	//URL is a domain address from where the site can be accessed.
 	URL = "https://signatures.cf"
 )
 
@@ -19,7 +21,6 @@ func init() {
 		log.Fatalf("Error opening file: %v", err)
 	}
 	log.SetOutput(f)
-
 	managers.RegisterLayout("default", layouts.GetDefaultLayout())
 	managers.RegisterLayout("userbar", layouts.GetUserbarLayout())
 }
