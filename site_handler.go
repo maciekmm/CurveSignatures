@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"math"
@@ -76,15 +77,20 @@ func createView(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		})
 		return
 	}
+	protocol := "http"
+	if r.TLS != nil {
+		protocol = "https"
+	}
 	if len(r.PostForm["rank"]) != 0 && len(r.PostForm["layout"]) != 0 {
 		layout := managers.GetLayoutByID(r.PostFormValue("layout"))
 		err = cachedTemplates.ExecuteTemplate(w, "created", m{
 			"ranks":       r.PostForm["rank"],
 			"layout":      layout,
 			"player":      player,
-			"link":        URL + "/img/" + strconv.Itoa(player.UID) + "/" + layout.Name() + "/" + "+" + strings.Join(r.PostForm["rank"], "+") + ".png",
-			"profileLink": URL + "/profile/" + strconv.Itoa(player.UID),
+			"link":        fmt.Sprintf("%s://%s/img/%d/%s/+%s.png", protocol, r.Host, player.UID, layout.Name(), strings.Join(r.PostForm["rank"], "+")), //r.Host + "/img/" + strconv.Itoa(player.UID) + "/" + layout.Name() + "/" + "+" + strings.Join(r.PostForm["rank"], "+") + ".png",
+			"profileLink": fmt.Sprintf("%s://%s/profile/%d", protocol, r.Host, player.UID),                                                              //r.Host + "/profile/" + strconv.Itoa(player.UID),
 		})
+
 		return
 	}
 

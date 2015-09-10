@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	//URL is a domain address from where the site can be accessed.
-	URL = "https://signatures.cf"
+//URL is a domain address from where the site can be accessed.
+//URL = "https://signatures.cf"
 )
 
 func init() {
