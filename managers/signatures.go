@@ -3,7 +3,7 @@ package managers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"image"
 	"net/http"
 	"strconv"
@@ -53,7 +53,7 @@ func init() {
 func GetPlayerData(playerID int) (*curveapi.Profile, error) {
 	req, err := httpClient.Get(API_URL + "user/" + strconv.Itoa(playerID))
 	if err != nil || req.StatusCode != 200 {
-		return nil, errors.New("Could not load player's profile.")
+		return nil, fmt.Errorf("Could not load player: %d profile", playerID)
 	}
 	return loadPlayerData(req)
 }
@@ -62,7 +62,7 @@ func GetPlayerData(playerID int) (*curveapi.Profile, error) {
 func GetPlayerDataByName(playerName string) (*curveapi.Profile, error) {
 	req, err := httpClient.Get(API_URL + "username/" + playerName)
 	if err != nil || req.StatusCode != 200 {
-		return nil, errors.New("Could not load player's profile.")
+		return nil, fmt.Errorf("Could not load player: %d profile", playerID)
 	}
 	return loadPlayerData(req)
 }
@@ -74,7 +74,7 @@ func loadPlayerData(req *http.Response) (*curveapi.Profile, error) {
 	buf.ReadFrom(req.Body)
 	err := json.Unmarshal(buf.Bytes(), &profile)
 	if err != nil {
-		return nil, errors.New("Could not load player's profile.")
+		return nil, fmt.Errorf("Could not unmarshal player %s profile", req.Request.RequestURI)
 	}
 	return &profile, nil
 }
